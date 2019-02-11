@@ -49,7 +49,7 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= access_token.get("/rs/prns/#{uid}")&.parsed.merge!(get_email)
+        @raw_info ||= access_token.get("/rs/prns/#{uid}").try!(:parsed).merge!(get_email)
       end
 
       def build_access_token
@@ -73,7 +73,7 @@ module OmniAuth
             key  = OpenSSL::PKey.read(File.read(options.key_path))
             crt  = OpenSSL::X509::Certificate.new(File.read(options.crt_path))
             signed = OpenSSL::PKCS7.sign(crt, key, data, [], OpenSSL::PKCS7::DETACHED)
-            Base64.urlsafe_encode64(signed.to_der.to_s.force_encoding('utf-8'), padding: false)
+            Base64.urlsafe_encode64(signed.to_der.to_s.force_encoding('utf-8'))
           end
         end
 
